@@ -1,118 +1,175 @@
-/* get cart total from session on load */
-updateCartTotal();
+           //first: 
+var slideIndex = 1;         
+showDivs(slideIndex);
 
-/* button event listeners */
-document.getElementById("emptycart").addEventListener("click", emptyCart);
-var btns = document.getElementsByClassName('addtocart');
-for (var i = 0; i < btns.length; i++) {
-    btns[i].addEventListener('click', function() {addToCart(this);});
+function plusDivs(n) {
+  showDivs(slideIndex += n);
 }
 
-/* ADD TO CART functions */
-
-function addToCart(elem) {
-    //init
-    var sibs = [];
-    var getprice;
-    var getproductName;
-    var cart = [];
-     var stringCart;
-    //cycles siblings for product info near the add button
-    while(elem = elem.previousSibling) {
-        if (elem.nodeType === 3) continue; // text node
-        if(elem.className == "price"){
-            getprice = elem.innerText;
-        }
-        if (elem.className == "productname") {
-            getproductName = elem.innerText;
-        }
-        sibs.push(elem);
-    }
-    //create product object
-    var product = {
-        productname : getproductName,
-        price : getprice
-    };
-    //convert product data to JSON for storage
-    var stringProduct = JSON.stringify(product);
-    /*send product data to session storage */
-    
-    if(!sessionStorage.getItem('cart')){
-        //append product JSON object to cart array
-        cart.push(stringProduct);
-        //cart to JSON
-        stringCart = JSON.stringify(cart);
-        //create session storage cart item
-        sessionStorage.setItem('cart', stringCart);
-        addedToCart(getproductName);
-        updateCartTotal();
-    }
-    else {
-        //get existing cart data from storage and convert back into array
-       cart = JSON.parse(sessionStorage.getItem('cart'));
-        //append new product JSON object
-        cart.push(stringProduct);
-        //cart back to JSON
-        stringCart = JSON.stringify(cart);
-        //overwrite cart data in sessionstorage 
-        sessionStorage.setItem('cart', stringCart);
-        addedToCart(getproductName);
-        updateCartTotal();
-    }
-}
-/* Calculate Cart Total */
-function updateCartTotal(){
-    //init
-    var total = 0;
-    var price = 0;
-    var items = 0;
-    var productname = "";
-    var carttable = "";
-    if(sessionStorage.getItem('cart')) {
-        //get cart data & parse to array
-        var cart = JSON.parse(sessionStorage.getItem('cart'));
-        //get no of items in cart 
-        items = cart.length;
-        //loop over cart array
-        for (var i = 0; i < items; i++){
-            //convert each JSON product in array back into object
-            var x = JSON.parse(cart[i]);
-            //get property value of price
-            price = parseFloat(x.price.split('$')[1]);
-            productname = x.productname;
-            //add price to total
-            carttable += "<tr><td>" + productname + "</td><td>$" + price.toFixed(2) + "</td></tr>";
-            total += price;
-        }
-        
-    }
-    //update total on website HTML
-    document.getElementById("total").innerHTML = total.toFixed(2);
-    //insert saved products to cart table
-    document.getElementById("carttable").innerHTML = carttable;
-    //update items in cart on website HTML
-    document.getElementById("itemsquantity").innerHTML = items;
-}
-//user feedback on successful add
-function addedToCart(pname) {
-  var message = pname + " was added to the cart";
-  var alerts = document.getElementById("alerts");
-  alerts.innerHTML = message;
-  if(!alerts.classList.contains("message")){
-     alerts.classList.add("message");
+function showDivs(n) {
+  var i;
+  var x = document.getElementsByClassName("slide1");
+  if (n > x.length) {slideIndex = 1}    
+  if (n < 1) {slideIndex = x.length}
+  for (i = 0; i < x.length; i++) {
+     x[i].style.display = "none";  
   }
+  x[slideIndex-1].style.display = "block";  
 }
-/* User Manually empty cart */
-function emptyCart() {
-    //remove cart session storage object & refresh cart totals
-    if(sessionStorage.getItem('cart')){
-        sessionStorage.removeItem('cart');
-        updateCartTotal();
-      //clear message and remove class style
-      var alerts = document.getElementById("alerts");
-      alerts.innerHTML = "";
-      if(alerts.classList.contains("message")){
-          alerts.classList.remove("message");
-      }
-    }
+
+//--------------------------------------------------------------------
+                                      //second: 
+var slideIndex2 = 1;         
+showDivs2(slideIndex2);
+
+function plusDivs2(n) {
+  showDivs2(slideIndex2 += n);
 }
+
+function showDivs2(n) {
+  var i;
+  var x = document.getElementsByClassName("slide2");
+  if (n > x.length) {slideIndex2 = 1}    
+  if (n < 1) {slideIndex2 = x.length}
+  for (i = 0; i < x.length; i++) {
+     x[i].style.display = "none";  
+  }
+  x[slideIndex2-1].style.display = "block";  
+}
+//--------------------------------------------------------------------
+                                     //third: using w3.js library
+myslide = w3.slideshow(".slide3",0)
+//--------------------------------------------------------------------
+
+var slideIndex3 = 1;              //fourth
+showDivs3(slideIndex3);
+
+function plusDivs3(n) {
+  showDivs3(slideIndex3 += n);
+}
+
+function showDivs3(n) {
+  var i;
+  var x = document.getElementsByClassName("slide4");
+  if (n > x.length) {slideIndex3 = 1}    
+  if (n < 1) {slideIndex3 = x.length}
+  for (i = 0; i < x.length; i++) {
+     x[i].style.display = "none";  
+  }
+  x[slideIndex3-1].style.display = "block";  
+}
+
+
+//====================================================================
+var bag =[];                    // initialize price array   
+                  // Animation:
+$(document).ready(function(){
+  $('.cart').click(function(){
+    $('.container').fadeToggle();
+  });
+  
+  $('.checkout').addClass('disabled');
+  $('#bin').addClass('disabled');
+});
+
+$(document).on('click','.add-to-cart',function(e){
+  e.preventDefault();
+  $('.empty').hide();
+  
+  //---------------------------------------------------------
+  if($(this).hasClass('disable')){    //disable mutiple clicks
+    return false;
+  }
+  $(document).find('.add-to-cart').addClass('disable');
+  //---------------------------------------------------------
+  
+  
+  
+  var parent = $(this).parents('.snip');
+  var src = parent.find('img').attr('src');
+  var cart = $(document).find('.cart');
+  
+  var posTop = parent.offset().top;    //return the coordinates of a element
+  var posLeft = parent.offset().left;
+ 
+  $('<img />', { 
+   class: 'animation-fly',
+   src: src
+}).appendTo('body').css({
+    'top': posTop,      
+    'left': parseInt(posLeft)
+  }); 
+  
+  setTimeout(function(){
+    $(document).find('.animation-fly').css({
+      'top': cart.offset().top,
+      'left': cart.offset().left
+    });
+    setTimeout(function(){
+      $(document).find('.animation-fly').remove(); //after fly
+      var quantity = parseInt(cart.find('#count-item').data('count'))+1;
+//       if(quantity<2){
+//         cart.find('#count-item').text(quantity + ' item').data('count', quantity);
+//       }else{
+//         cart.find('#count-item').text(quantity + ' items').data('count', quantity);
+//       }
+      cart.find('#count-item').text(quantity + (quantity<2 ?' item':' items')).data('count', quantity);
+      
+                             //add item to cart
+    var name = parent.find('h4').text();
+    var price = parent.find('.real').text();
+    var txt3 = document.createElement("hr");
+    var txt4 = document.createElement("hr");
+       
+    $('.col1-name').append(name,txt3);
+    $('.col2-price').append(price,txt4);
+    $('.checkout').addClass('add-animation');
+    $('.checkout').removeClass('disabled');
+    
+    $('#bin').addClass('add-animation2');
+    $('#bin').removeClass('disabled');
+    
+                            //find total amount
+    var price2 = parseFloat(parent.find('.real').data('price')); //get "data-price" from <div class="real">
+    bag.push(price2);                                            
+    var total = 0;
+    $(".total-amount").text(function(){
+     for(var i in bag){
+      total += bag[i];    //calculate sum of all numbers in the array 
+     }
+     var last = "$ " + total.toFixed(2);
+     $('.pay-last').text(last);
+     return last;   // return total only -> bug.
+     
+    });
+      
+      $(document).find('.add-to-cart').removeClass('disable');
+    },1000);
+  },500);
+  
+  $('.bin').on('click',function(){     
+   $('.col1-name').empty();
+   $('.col2-price').empty();
+   $('.empty').show();
+   $('.checkout').removeClass('add-animation');
+   $('#bin').removeClass('add-animation2');
+   $('.checkout').addClass('disabled');
+   $('#bin').addClass('disabled');
+   bag = [];
+   $('.total-amount').add('.pay-last').text("$ " + bag.length);
+   cart.find('#count-item').text(0 + ' ').data('count', 0);
+ });
+  
+});
+
+
+
+
+//------------------BILL----------------------
+
+$(document).ready(function(){
+  $('#coupon').on('click',function(){
+    alert("minhquanghust.blogspot.com Coupon Code:" + '\n' + "25% off: 0511Q-1601CV" +'\n' + "15% off: 0511Q-1701NA" + '\n' + "10% off: 0511Q-1901QA")
+  });
+})
+
